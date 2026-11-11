@@ -1,0 +1,13 @@
+# Entornos virtuales y caché de Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Variables de entorno y contraseñas (CRÍTICO)
+.env
+backend/.env
+
+# Dependencias de Node
+frontend/node_modules/
+frontend/dist/
