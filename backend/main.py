@@ -121,10 +121,10 @@ async def eliminar_mascota(id: int, usuario: str = Depends(verificar_token)):
     except Exception:
         raise HTTPException(status_code=400, detail="No se puede eliminar: posee turnos registrados.")
 
-# --- GESTIÓN DE TURNOS CON STORED PROCEDURE (R03, R04, R05, R06) ---
+# --- GESTIÓN DE TURNOS CON STORED PROCEDURE ---
 @app.get("/turnos")
 async def consultar_turnos(fecha: date = None, usuario: str = Depends(verificar_token)):
-    # Consulta SQL 1: Uso de múltiples INNER JOIN para agenda detallada (R04)
+    # Consulta SQL 1: Uso de múltiples INNER JOIN para agenda detallada 
     base_query = """
     SELECT t.idTurno, t.fecha, CAST(t.hora AS CHAR) AS hora, t.motivo, t.estado,
            m.idMascota, m.nombre AS mascota, m.especie,
@@ -141,7 +141,7 @@ async def consultar_turnos(fecha: date = None, usuario: str = Depends(verificar_
 
 @app.post("/turno", status_code=status.HTTP_201_CREATED)
 async def registrar_turno_sp(turno: TurnoCreate, usuario: str = Depends(verificar_token)):
-    # Invoca el Stored Procedure transaccional (R03 y R06)
+    # Invoca el Stored Procedure transaccional
     call_sp = """
     CALL sp_registrar_turno(:fecha, :hora, :motivo, :idMascota, @res, @msg);
     """
@@ -156,7 +156,7 @@ async def registrar_turno_sp(turno: TurnoCreate, usuario: str = Depends(verifica
 
 @app.put("/turno/{id}")
 async def modificar_turno(id: int, turno: TurnoUpdate, usuario: str = Depends(verificar_token)):
-    # Verificar superposición si el turno no está cancelado (R06)
+    # Verificar superposición si el turno no está cancelado 
     if turno.estado != "cancelado":
         choque = await db.fetch_one(
             """
